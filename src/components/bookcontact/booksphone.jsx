@@ -1,65 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Form } from 'components/FormForContact/form';
 import css from './booksphone.module.css';
-import { toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, removeContact, changeSearchQuery } from 'redux/actions';
+import { getFilteredContacts } from 'redux/selectors';
+
 const BookPhones = () => {
-  const initialContacts = [
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ];
+  const { contacts } = useSelector(state => state.contacts);
+  const { searchQuery } = useSelector(state => state.filters);
   const LocalStorage = JSON.parse(window.localStorage.getItem('bookContacts'));
-  const [contacts, setContacts] = useState(() => {
-    return LocalStorage ?? initialContacts;
-  });
-  const [filter, setFilter] = useState('');
+  const listContacts = useSelector(getFilteredContacts);
+
+
+
   useEffect(() => {
-    localStorage.setItem('bookContacts', JSON.stringify(contacts));
-  }, [contacts]);
-  const FormSubmit = data => {
-    console.log(data);
-    const existingContact = contacts.find(
-      el => el.name.toLowerCase() === data.name.toLowerCase()
-    );
-
-    if (existingContact) {
-      toast.error('Already Added.', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      return;
-    }
-    setContacts(prevState => [...prevState, data]);
-  };
-
-  const deleteContact = id => {
-    setContacts(prevState => prevState.filter(contact => contact.id !== id));
-  };
-
-  const handleFindContact = event => {
-    setFilter(event.target.value);
-  };
-
-  const getFilteredContacts = () => {
-    if (!filter) {
+    if (!LocalStorage) {
       return contacts;
     }
+    localStorage.setItem('bookContacts', JSON.stringify(contacts));
+  }, [contacts, LocalStorage]);
 
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
+  const dispatch = useDispatch();
+
+  const handleFindContact = event => {
+    const query = event.target.value;
+    dispatch(changeSearchQuery(query));
   };
+
+  const handleAddContact = data => {
+    dispatch(addContact(data));
+  
+    
+  };
+
+  const handleRemoveContact = id => {
+    dispatch(removeContact(id));
+  };
+
 
   return (
     <>
       <h1 className={css.title}>Phonebook</h1>
-      <Form onSubmit={FormSubmit} />
+      <Form onSubmit={handleAddContact} />
       <div className={css.container}>
         <h2 className={css.title_contact}>Contacts</h2>
 
@@ -69,20 +53,21 @@ const BookPhones = () => {
             className={css.input_find}
             type="text"
             name="filter"
-            value={filter}
+            value={searchQuery}
             onChange={handleFindContact}
           />
         </label>
 
         <ul>
-          {getFilteredContacts().map(contact => (
-            <li className={css.list_contact} key={contact.id}>
-              <p className={css.info_contact}>{contact.name}</p>
-              <p className={css.info_contact}>{contact.number}</p>
+          {listContacts.map(({ id, name, number }) => (
+            <li className={css.list_contact} key={id}>
+              <p className={css.info_contact}>{name}</p>
+              
+              <p className={css.info_contact}>{number}</p>
               <button
                 className={css.button_delet_contact}
                 type="button"
-                onClick={() => deleteContact(contact.id)}
+                onClick={() => handleRemoveContact(id)}
               >
                 Delete
               </button>
