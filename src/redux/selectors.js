@@ -1,6 +1,6 @@
 export const getFilteredContacts = state => {
   const { searchQuery } = state.filters;
-  const { contacts } = state.contacts; // Destructure `contacts` correctly
+  const { contacts } = state.contacts; 
 
   if (!searchQuery) {
     return contacts;
