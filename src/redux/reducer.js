@@ -8,7 +8,11 @@ const initialContacts = {
     { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
   ],
 };
-export const contactsReducer = (state = initialContacts, action) => {
+const getInitialData = () => {
+  const savedContacts = JSON.parse(localStorage.getItem('bookContacts'));
+  return savedContacts || initialContacts.contacts;
+};
+export const contactsReducer = (state = {contacts:getInitialData()}, action) => {
   switch (action.type) {
     case ACTIONS.ADD_CONTACT:
       const newContact = action.payload;

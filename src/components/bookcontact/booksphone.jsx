@@ -31,8 +31,6 @@ const BookPhones = () => {
 
   const handleAddContact = data => {
     dispatch(addContact(data));
-  
-    
   };
 
   const handleRemoveContact = id => {
