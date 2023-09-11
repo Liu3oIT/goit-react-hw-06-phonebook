@@ -4,7 +4,7 @@ import css from './booksphone.module.css';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, removeContact, changeSearchQuery } from 'redux/actions';
+import { removeContact, changeSearchQuery } from '../../redux/tasksSlice';
 import { getFilteredContacts } from 'redux/selectors';
 
 const BookPhones = () => {
@@ -12,36 +12,33 @@ const BookPhones = () => {
   const { searchQuery } = useSelector(state => state.filters);
   const LocalStorage = JSON.parse(window.localStorage.getItem('bookContacts'));
   const listContacts = useSelector(getFilteredContacts);
-
+  const dispatch = useDispatch();
 
 
   useEffect(() => {
-    if (!LocalStorage) {
-      return contacts;
+    if (LocalStorage) {
+      localStorage.setItem('bookContacts', JSON.stringify(contacts)); 
     }
-    localStorage.setItem('bookContacts', JSON.stringify(contacts));
   }, [contacts, LocalStorage]);
 
-  const dispatch = useDispatch();
+
 
   const handleFindContact = event => {
     const query = event.target.value;
     dispatch(changeSearchQuery(query));
   };
 
-  const handleAddContact = data => {
-    dispatch(addContact(data));
-  };
 
   const handleRemoveContact = id => {
     dispatch(removeContact(id));
+     localStorage.setItem('bookContacts', JSON.stringify(contacts));
   };
 
 
   return (
     <>
       <h1 className={css.title}>Phonebook</h1>
-      <Form onSubmit={handleAddContact} />
+      <Form />
       <div className={css.container}>
         <h2 className={css.title_contact}>Contacts</h2>
 

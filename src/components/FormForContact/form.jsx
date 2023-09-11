@@ -2,10 +2,13 @@ import { useState } from 'react';
 import React from 'react';
 import css from './form.module.css';
 import { nanoid } from 'nanoid';
+import { addContact } from 'redux/tasksSlice';
+import { useDispatch } from 'react-redux';
 
-export const Form = ({ onSubmit }) => {
+export const Form = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const dispatch = useDispatch();
 
   const handleInputChange = event => {
     const { name, value } = event.target;
@@ -29,9 +32,10 @@ export const Form = ({ onSubmit }) => {
       number: number,
     };
 
-    onSubmit(newContact);
+    dispatch(addContact(newContact));
     reset();
   };
+  
   const reset = () => {
     setNumber('');
     setName('');
