@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React  from 'react';
 import { Form } from 'components/FormForContact/form';
 import css from './booksphone.module.css';
 
@@ -8,18 +8,11 @@ import { removeContact, changeSearchQuery } from '../../redux/tasksSlice';
 import { getFilteredContacts } from 'redux/selectors';
 
 const BookPhones = () => {
-  const { contacts } = useSelector(state => state.contacts);
   const { searchQuery } = useSelector(state => state.filters);
-  const LocalStorage = JSON.parse(window.localStorage.getItem('bookContacts'));
   const listContacts = useSelector(getFilteredContacts);
   const dispatch = useDispatch();
 
 
-  useEffect(() => {
-    if (LocalStorage) {
-      localStorage.setItem('bookContacts', JSON.stringify(contacts)); 
-    }
-  }, [contacts, LocalStorage]);
 
 
 
@@ -31,7 +24,6 @@ const BookPhones = () => {
 
   const handleRemoveContact = id => {
     dispatch(removeContact(id));
-     localStorage.setItem('bookContacts', JSON.stringify(contacts));
   };
 
 
